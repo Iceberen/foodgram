@@ -1,12 +1,11 @@
 import uuid
+
 from autoslug import AutoSlugField
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
-from django.core.exceptions import ValidationError
-
 from core.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
-
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models
 
 User = get_user_model()
 

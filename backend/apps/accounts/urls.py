@@ -1,9 +1,7 @@
-from django.urls import path, include
-from rest_framework import routers
-
 from apps.accounts.views import (CustomTokenCreateView, CustomTokenDestroyView,
                                  CustomUserViewSet)
-
+from django.urls import include, path
+from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register('users', CustomUserViewSet, basename='user')

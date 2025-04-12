@@ -1,11 +1,10 @@
+from apps.accounts.serializers import CustomUserSerializer
+from apps.base.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                              ShoppingCart, Tag)
+from core.settings import MAX_LENTHG_RECIPE, MIN_AMOUNT, MIN_TIME
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from drf_extra_fields.fields import Base64ImageField
-
-from core.settings import MIN_TIME, MIN_AMOUNT, MAX_LENTHG_RECIPE
-from apps.accounts.serializers import CustomUserSerializer
-from apps.base.models import (Tag, Ingredient, RecipeIngredient, Recipe,
-                              Favorite, ShoppingCart)
 
 
 class TagSerializer(serializers.ModelSerializer):

@@ -1,8 +1,6 @@
+from apps.base.models import (Favorite, Ingredient, Recipe, ShoppingCart,
+                              Subscription, Tag)
 from django.contrib import admin
-
-from apps.base.models import (Ingredient, Tag, Recipe, Subscription, Favorite,
-                              ShoppingCart)
-
 
 EMPTY_MSG = '-пусто-'
 

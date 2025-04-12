@@ -1,21 +1,20 @@
-from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from apps.accounts.serializers import (ChangePasswordSerializer,
+                                       CreateUserSerializer,
+                                       CustomUserSerializer, FollowSerializer,
+                                       GetFollowSerializer,
+                                       UserAvatarSerializer)
+from apps.base.models import Subscription
+from apps.base.pagination import Pagination
+from apps.base.permissions import IsOwnerOrReadOnly
 from django.contrib.auth import authenticate, get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from djoser.views import TokenCreateView, TokenDestroyView, UserViewSet
-
-from apps.base.pagination import Pagination
-from apps.base.permissions import IsOwnerOrReadOnly
-from apps.accounts.serializers import (
-    CreateUserSerializer, CustomUserSerializer, UserAvatarSerializer,
-    ChangePasswordSerializer, GetFollowSerializer, FollowSerializer
-)
-from apps.base.models import Subscription
-
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 User = get_user_model()
 
