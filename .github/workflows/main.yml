@@ -72,17 +72,6 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
-    - name: Copy docs via scp
-      uses: appleboy/scp-action@master
-      with:
-        timeout: 60s
-        debug: true
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "./docs"
-        target: "~/foodgram"
     - name: Copy infra via ssh
       uses: appleboy/scp-action@master
       with:
@@ -107,6 +96,8 @@ jobs:
           sudo docker compose -f docker-compose.yml down
           sudo docker compose -f docker-compose.yml up -d --wait
           sudo docker exec foodgram-back python manage.py migrate
+          sudo docker exec foodgram-back python manage.py collectstatic
+          sudo docker exec foodgram-back cp -r /app/collected_static/. /backend_static/static/
 
   send_message:
     runs-on: ubuntu-latest
