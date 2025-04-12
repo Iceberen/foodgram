@@ -11,4 +11,4 @@ RUN pip install -U pip &&\
 
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "core.wsgi"] 
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "core.wsgi"]
