@@ -35,7 +35,7 @@ services:
   nginx:
     container_name: foodgram-proxy
     image: nginx:1.25.4-alpine
-    env_file: .env
+    env_file: ../.env
     ports:
       - "8090:80"
     volumes:
