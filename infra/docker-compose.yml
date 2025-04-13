@@ -36,7 +36,7 @@ services:
     image: iceberen/foodgram_gateway
     restart: always
     ports:
-      - 8888:80
+      - 8000:80
     volumes:
       - redoc:/usr/share/nginx/html/api/docs/
       - static:/staticfiles/
