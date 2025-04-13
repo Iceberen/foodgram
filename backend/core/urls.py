@@ -1,4 +1,4 @@
-from apps.api.views import  recipe_by_link
+from apps.api.views import recipe_by_link
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
