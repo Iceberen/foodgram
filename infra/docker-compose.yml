@@ -12,6 +12,7 @@ services:
     env_file: ../.env
   backend:
     image: iceberen/foodgram_backend
+    restart: always
     env_file: ../.env
     depends_on:
       - db
@@ -22,6 +23,7 @@ services:
 
   frontend:
     image: iceberen/foodgram_frontend
+    restart: always
     volumes:
       - static:/frontend_static
     command: cp -r /app/build/. /frontend_static/
@@ -40,4 +42,3 @@ services:
     depends_on:
       - frontend
       - backend
-      - db
