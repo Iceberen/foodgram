@@ -14,6 +14,8 @@ services:
     image: iceberen/foodgram_backend
     restart: always
     env_file: ../.env
+    environment:
+      DJANGO_LOG_LEVEL: "DEBUG"
     depends_on:
       - db
     volumes:
