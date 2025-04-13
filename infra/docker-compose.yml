@@ -6,16 +6,12 @@ volumes:
 
 services:
   db:
-    container_name: foodgram_db
     image: postgres:13
-    restart: always
     volumes:
       - pg_data:/var/lib/postgresql/data
     env_file: ../.env
   backend:
-    container_name: foodgram_backend
     image: iceberen/foodgram_backend
-    restart: always
     env_file: ../.env
     depends_on:
       - db
@@ -25,14 +21,12 @@ services:
       - redoc:/app/api/docs/
 
   frontend:
-    container_name: foodgram_frontend
     image: iceberen/foodgram_frontend
     volumes:
       - static:/frontend_static
     command: cp -r /app/build/. /frontend_static/
     env_file: ../.env
   gateway:
-    container_name: foodgram_gateway
     image: iceberen/foodgram_gateway
     restart: always
     ports:
