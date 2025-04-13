@@ -10,5 +10,5 @@ router.register('ingredients', IngredientView, basename='ingredient')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('s/<uuid:short_link>/', recipe_by_link, name='recipe-short-link'),
+    
 ]

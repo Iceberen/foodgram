@@ -2,13 +2,13 @@ import csv
 
 from apps.base.models import Ingredient
 from django.core.management.base import BaseCommand
-
+from core.settings import BASE_DIR
 
 class Command(BaseCommand):
     help = 'import db from csv'
 
     def handle(self, *args, **options):
-        with open('static/data/ingredients.csv', encoding='utf-8') as db:
+        with open(f'{BASE_DIR}/data/ingredients.csv', encoding='utf-8') as db:
             data = csv.reader(db)
             next(data)
 
