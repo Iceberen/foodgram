@@ -1,0 +1,49 @@
+volumes:
+  pg_data:
+  static:
+  media:
+  redoc:
+
+networks:
+  app_net:
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    env_file: .env
+    networks:
+      - app_net
+    
+  backend:
+    build: ./backend/
+    env_file: .env
+    depends_on:
+      - db
+    volumes:
+      - static:/backend_static
+      - media:/app/media/
+      - redoc:/app/apps/api/docs/
+    networks:
+      - app_net
+
+  frontend:
+    build: ./frontend/
+    env_file: .env
+    command: cp -r /app/build/. /frontend_static/
+    volumes:
+      - static:/frontend_static
+    networks:
+      - app_net
+
+  gateway:
+    build: ./infra/
+    volumes:
+      - static:/staticfiles/
+      - media:/app/media/
+      - redoc:/usr/share/nginx/html/api/docs/
+    ports:
+      - 8080:80
+    networks:
+      - app_net

@@ -7,7 +7,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='token')
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost, 127.0.0.1').split(', ')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS',
+                          default='127.0.0.1,localhost').split(',')
 
 SITE_DOMAIN = f'https://{ALLOWED_HOSTS[0]}'
 
@@ -83,7 +84,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-Ru'
 
 TIME_ZONE = 'UTC'
 
@@ -92,7 +93,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'collected_static'
+STATIC_ROOT = BASE_DIR / 'backend_static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

@@ -4,7 +4,7 @@ from autoslug import AutoSlugField
 from core.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 User = get_user_model()
@@ -57,11 +57,12 @@ class Tag(BaseModel):
         max_length=MAX_LENTHG_NAME,
         unique=True
     )
-    slug = AutoSlugField(
-        populate_from='name',
+    slug = models.SlugField(
         max_length=MAX_LENGTH_SLUG,
-        always_update=True,
-        null=True,
+        unique=True,
+        validators=[RegexValidator(
+            regex=r'^[-a-zA-Z0-9_]+$',
+            message='Для создания слага используйте буквы, числа и _',), ],
         verbose_name='Slug тэга',
     )
 

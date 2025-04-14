@@ -4,42 +4,51 @@ volumes:
   media:
   redoc:
 
+networks:
+  app_net:
+
 services:
   db:
     image: postgres:13
     volumes:
       - pg_data:/var/lib/postgresql/data
-    env_file: ../.env
+    env_file: .env
+    networks:
+      - app_net
+    
   backend:
     image: iceberen/foodgram_backend
     restart: always
-    env_file: ../.env
-    environment:
-      DJANGO_LOG_LEVEL: "DEBUG"
+    env_file: .env
     depends_on:
       - db
     volumes:
       - static:/backend_static
       - media:/app/media/
-      - redoc:/app/api/docs/
+      - redoc:/app/apps/api/docs/
+    networks:
+      - app_net
 
   frontend:
     image: iceberen/foodgram_frontend
+    env_file: .env
+    command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
-    command: cp -r /app/build/. /frontend_static/
-    env_file: ../.env
+    networks:
+      - app_net
+
   gateway:
     image: iceberen/foodgram_gateway
-    restart: always
-    ports:
-      - 8000:80
     volumes:
-      - redoc:/usr/share/nginx/html/api/docs/
       - static:/staticfiles/
       - media:/app/media/
-    env_file:
-      - ../.env
+      - redoc:/usr/share/nginx/html/api/docs/
+    ports:
+      - 8080:80
+    networks:
+      - app_net
     depends_on:
       - frontend
       - backend
+      - db
