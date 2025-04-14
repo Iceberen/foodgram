@@ -118,7 +118,6 @@ jobs:
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
           sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/backend_static/. /backend_static/static/
           sudo docker compose -f docker-compose.production.yml exec backend python manage.py load_db
-          sudo docker compose -f docker-compose.production.yml exec backend python manage.py shell -c "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@example.com', '${{ secrets.PASS_SUPER_USER }}')"
 
   send_message:
     runs-on: ubuntu-latest
