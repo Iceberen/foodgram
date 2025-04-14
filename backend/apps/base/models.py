@@ -1,6 +1,5 @@
 import uuid
 
-from autoslug import AutoSlugField
 from core.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
