@@ -10,6 +10,11 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS',
                           default='127.0.0.1,localhost').split(',')
 
+domain_name = os.getenv('ALLOWED_HOSTS')
+if domain_name:
+    CSRF_TRUSTED_ORIGINS = [f"https://{domain_name}"]
+else:
+    CSRF_TRUSTED_ORIGINS = []
 
 SITE_DOMAIN = f'https://{ALLOWED_HOSTS[0]}'
 
