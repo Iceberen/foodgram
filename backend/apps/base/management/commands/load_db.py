@@ -13,11 +13,9 @@ class Command(BaseCommand):
             data = csv.reader(db)
             next(data)
 
-            Ingredient.objects.all().delete()
-
             for row in data:
-                ingredient = Ingredient(
+                ingredient, _ = Ingredient.objects.update_or_create(
                     name=row[0],
-                    measurement_unit=row[1],
+                    measurement_unit=row[1]
                 )
-                ingredient.save()
+            ingredient.save()
