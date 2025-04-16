@@ -125,30 +125,20 @@ class RecipesViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,),)
     def download_shopping_cart(self, request):
         """Скачать список ингредиентов из корзины."""
-        file = StringIO()
-        file.write(self._ingredients_in_shopping_cart(request.user))
-        response = HttpResponse(file, content_type='text/plain')
-        response['Content-Disposition'] = (
-            'attachment; filename="shopping_list.txt"')
-        return response
-
-    @staticmethod
-    def _ingredients_in_shopping_cart(user):
-        """Получает все ингредиенты из корзины пользователя."""
         ingredients = (
             RecipeIngredient.objects.
-            filter(recipe__in_shopping_cart__user=user)
+            filter(recipe__in_shopping_cart__user=request.user)
             .values('ingredient__name', 'ingredient__measurement_unit')
             .annotate(total_amount=Sum('amount'))
             .order_by('ingredient__name')
         )
-        ingredients_lines = [
+        output = '\n'.join(
             f'{num}. {item["ingredient__name"]} - '
-            f'{num}. {item["total_amount"]} '
-            f'{num}. {item["ingredient__measurement_unit"]}.'
-            for num, item in enumerate(ingredients)
-        ]
-        return '\n'.join(ingredients_lines)
+            f'{item["total_amount"]} '
+            f'{item["ingredient__measurement_unit"]}.'
+            for num, item in enumerate(ingredients, start=1)
+        )
+        return HttpResponse(output, content_type='text/plain')
 
 
 @api_view(['GET'])

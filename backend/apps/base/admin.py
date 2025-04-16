@@ -22,10 +22,15 @@ class TagAdmin(admin.ModelAdmin):
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'get_author', 'text', 'cooking_time',
-                    'get_tags', 'get_ingredients', 'created_at',)
-    search_fields = ('name', 'author',)
+                    'get_tags', 'created_at', 'get_favorites_count')
+    search_fields = ('name', 'author__username', 'author__first_name',
+                     'author__last_name')
     list_filter = ('tags',)
     empty_value_display = EMPTY_MSG
+
+    @admin.display(description="в избранном")
+    def get_favorites_count(self, obj):
+        return obj.favorite.count()
 
     @admin.display(description='Никнейм автора')
     def get_author(self, obj):
@@ -35,14 +40,6 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_tags(self, obj):
         tags = [tag.name for tag in obj.tags.all()]
         return ', '.join(tags)
-
-    @admin.display(description='Ингредиенты')
-    def get_ingredients(self, obj):
-        return '\n '.join([
-            f'{ingr["ingredient__name"]} - {ingr["amount"]} '
-            f'{ingr["ingredient__measurement_unit"]}.'
-            for ingr in obj.recipe.values('ingredient__name', 'amount',
-                                          'ingredient__measurement_unit')])
 
 
 @admin.register(Subscription)
@@ -54,21 +51,15 @@ class SubscribeAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'get_recipe')
+    list_display = ('id', 'user', 'recipe')
+    search_fields = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
     empty_value_display = EMPTY_MSG
-
-    @admin.display(description='Рецепты')
-    def get_recipe(self, obj):
-        return [f'{recipe["name"]} '
-                for recipe in obj.recipe.values('name')[:7]]
 
 
 @admin.register(ShoppingCart)
 class SoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'get_recipe',)
+    list_display = ('id', 'user', 'recipe')
+    search_fields = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
     empty_value_display = EMPTY_MSG
-
-    @admin.display(description='Рецепты')
-    def get_recipe(self, obj):
-        return [f'{recipe["name"]} '
-                for recipe in obj.recipe.values('name')[:7]]
