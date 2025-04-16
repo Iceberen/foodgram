@@ -115,6 +115,11 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             'text', 'cooking_time', 'author'
         )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            self.fields['image'].required = False
+
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -144,6 +149,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             for ingredient in ingredients]
         RecipeIngredient.objects.bulk_create(recipe_ingredients)
         instance.tags.set(tags)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
         return instance
 
     def to_representation(self, instance):
