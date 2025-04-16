@@ -1,5 +1,3 @@
-from io import StringIO
-
 from apps.api.filters import IngredientFilter, RecipeFilter
 from apps.api.serializers import (CreateRecipeSerializer, FavoriteSerializer,
                                   IngredientSerializer, ReadRecipeSerializer,
