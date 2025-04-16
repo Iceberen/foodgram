@@ -190,7 +190,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         model = Favorite
         fields = ('user', 'recipe',)
         validators = [UniqueTogetherValidator(queryset=Favorite.objects.all(),
-                                              fields=('user', 'recipe'),),]
+                                              fields=('user', 'recipe'), )]
 
     def to_representation(self, instance):
         return ShortRecipeSerializer(
@@ -205,7 +205,7 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
         fields = ('user', 'recipe',)
         validators = [UniqueTogetherValidator(
             queryset=ShoppingCart.objects.all(),
-            fields=('user', 'recipe'),),]
+            fields=('user', 'recipe'), )]
 
     def to_representation(self, instance):
         return ShortRecipeSerializer(
