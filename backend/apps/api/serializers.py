@@ -106,7 +106,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=True)
     name = serializers.CharField(required=True, max_length=MAX_LENTHG_RECIPE)
     cooking_time = serializers.IntegerField(min_value=MIN_TIME, required=True)
-    image = Base64ImageField(required=True)
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
@@ -119,6 +119,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         if self.instance:
             self.fields['image'].required = False
+        else:
+            self.fields['image'].required = True
 
     def create(self, validated_data):
         tags = validated_data.pop('tags')
@@ -157,6 +159,12 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return ReadRecipeSerializer(instance, context=self.context).data
 
+    def validate_image(self, value):
+        if not self.instance and not value:
+            raise serializers.ValidationError(
+                'Изображение обязательно при создании.')
+        return value
+
     def validate(self, attrs):
         if 'tags' not in attrs or not attrs['tags']:
             raise serializers.ValidationError({'tags': 'Обязательное поле.'})
@@ -172,8 +180,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         if len(ingredient_id_list) != len(set(ingredient_id_list)):
             raise serializers.ValidationError(
                 {'ingredients': 'Ингредиенты должны быть уникальными.'})
-        if 'image' not in attrs or not attrs['image']:
-            raise serializers.ValidationError({'image': 'Обязательное поле.'})
         return attrs
 
 
