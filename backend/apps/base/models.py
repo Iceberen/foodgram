@@ -1,15 +1,16 @@
 import uuid
 
-from core.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
+from core.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
+
 User = get_user_model()
 
 
-class BaseModel(models.Model):
+class TimeStampModel(models.Model):
     """Базовая абстракная модель."""
     created_at = models.DateTimeField(
         verbose_name='Дата создания',
@@ -49,7 +50,7 @@ class Ingredient(models.Model):
         return f'{self.name} ({self.measurement_unit})'
 
 
-class Tag(BaseModel):
+class Tag(TimeStampModel):
     """Модель Тэгов."""
     name = models.CharField(
         verbose_name='Тэг',
@@ -74,7 +75,7 @@ class Tag(BaseModel):
         return self.name
 
 
-class Recipe(BaseModel):
+class Recipe(TimeStampModel):
     """Модель Рецептов."""
     author = models.ForeignKey(
         User,
@@ -153,7 +154,7 @@ class RecipeIngredient(models.Model):
         return f'{self.amount} {self.measurement} {self.ingredient.name}'
 
 
-class Subscription(BaseModel):
+class Subscription(TimeStampModel):
     """Модель подписок."""
     subscriber = models.ForeignKey(
         User,
@@ -184,7 +185,7 @@ class Subscription(BaseModel):
             raise ValidationError('Нельзя подписаться на самого себя')
 
 
-class Favorite(BaseModel):
+class Favorite(TimeStampModel):
     """Модель избранного."""
     user = models.ForeignKey(
         User,

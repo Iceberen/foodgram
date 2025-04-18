@@ -1,8 +1,9 @@
 import csv
 
 from apps.base.models import Ingredient
-from core.settings import BASE_DIR
 from django.core.management.base import BaseCommand
+
+from core.settings import BASE_DIR
 
 
 class Command(BaseCommand):

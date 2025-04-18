@@ -1,9 +1,16 @@
-from apps.base.models import (Favorite, Ingredient, Recipe, ShoppingCart,
-                              Subscription, Tag)
 from django.contrib import admin
 
-EMPTY_MSG = '-пусто-'
+from apps.base.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    ShoppingCart,
+    Subscription,
+    Tag,
+)
 
+
+EMPTY_MSG = '-пусто-'
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):

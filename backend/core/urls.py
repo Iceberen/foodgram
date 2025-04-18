@@ -1,4 +1,4 @@
-from apps.api.views import recipe_by_link
+from apps.api.views import redirect_to_recipe
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -6,9 +6,9 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('apps.accounts.urls')),
     path('api/', include('apps.api.urls')),
-    path('s/<uuid:short_link>/', recipe_by_link, name='recipe-short-link'),
+    path('s/<uuid:short_link>/', redirect_to_recipe,
+         name='redirect_to_recipe'),
 ]
 
 if settings.DEBUG:

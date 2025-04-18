@@ -1,5 +1,6 @@
-from core.settings import ITEMS_ON_PAGE
 from rest_framework import pagination
+
+from core.settings import ITEMS_ON_PAGE
 
 
 class Pagination(pagination.PageNumberPagination):
