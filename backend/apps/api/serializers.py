@@ -1,10 +1,9 @@
 from drf_extra_fields.fields import Base64ImageField
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 
 from apps.base.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
