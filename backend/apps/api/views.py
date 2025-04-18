@@ -139,31 +139,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 def redirect_to_recipe(request, short_link):
     """Редирект по короткой ссылке на детальный URL рецепта."""
     recipe = get_object_or_404(Recipe, short_link=short_link)
-    return redirect(f'/api/recipes/{recipe.id}/')
-
-
-###########################################
-
-# from apps.accounts.serializers import (
-#     ChangePasswordSerializer,
-#     CreateUserSerializer,
-#     CustomUserSerializer,
-#     FollowSerializer,
-#     GetFollowSerializer,
-#     UserAvatarSerializer,
-# )
-# from apps.base.models import Subscription
-# from apps.base.pagination import Pagination
-# from apps.base.permissions import IsOwnerOrReadOnly
-
-
-# from django.shortcuts import get_object_or_404
-
-# from rest_framework import status
-
-# from rest_framework.decorators import action
-# from rest_framework.permissions import AllowAny, IsAuthenticated
-# from rest_framework.response import Response
+    return redirect(f'{settings.SITE_DOMAIN}/api/recipes/{recipe.id}/')
 
 
 class CustomTokenCreateView(TokenCreateView):
@@ -284,11 +260,8 @@ class CustomUserViewSet(UserViewSet):
         ).distinct()
         paginator = Pagination()
         result_page = paginator.paginate_queryset(following_users, request)
-        serializer = GetFollowSerializer(
-            result_page,
-            many=True,
-            context={'request': request},
-        )
+        serializer = GetFollowSerializer(result_page, many=True,
+                                         context={'request': request},)
         return paginator.get_paginated_response(serializer.data)
 
     @action(methods=('POST', 'DELETE',), detail=True, url_path='subscribe',
@@ -296,10 +269,9 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id):
         """Подписка/отписка на пользователя."""
         following = get_object_or_404(User, id=id)
-        user = get_object_or_404(User, id=request.user.id)
         if request.method == 'POST':
             serializer = FollowSerializer(
-                data={'subscriber': user.id, 'target': following.id},
+                data={'subscriber': request.user.id, 'target': following.id},
                 context={
                     'request': request,
                     'recipes_limit': request.query_params.get('recipes_limit')}
@@ -308,7 +280,7 @@ class CustomUserViewSet(UserViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         elif request.method == 'DELETE':
-            follow = Subscription.objects.filter(subscriber=user.id,
+            follow = Subscription.objects.filter(subscriber=request.user.id,
                                                  target=following.id,)
             if follow.exists():
                 follow.delete()

@@ -23,26 +23,6 @@ class TokenCreateSerializer(serializers.Serializer):
     password = serializers.CharField(style={'input_type': 'password'},
                                      write_only=True)
 
-    def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise ValidationError(
-                {'email': 'Пользователь с таким email не найден'}
-            )
-        user = authenticate(username=email, password=password)
-        if not user:
-            raise ValidationError({'password': 'Неверный пароль'})
-        attrs['user'] = user
-        return attrs
-
-    def create(self, validated_data):
-        user = validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return {'auth_token': token.key}
-
 
 class CreateUserSerializer(serializers.ModelSerializer):
     """Сериализатор создания пользователя."""
@@ -376,10 +356,10 @@ class FollowSerializer(serializers.ModelSerializer):
         fields = ('subscriber', 'target',)
 
     def validate(self, attrs):
-        subscriptions, target = attrs['subscriber'], attrs['target']
-        if subscriptions == target:
+        subscriber, target = attrs['subscriber'], attrs['target']
+        if subscriber == target:
             raise serializers.ValidationError('Подписка на самого себя.')
-        if Subscription.objects.filter(subscriber=subscriptions,
+        if Subscription.objects.filter(subscriber=subscriber,
                                        target=target).exists():
             raise serializers.ValidationError('Уже подписан.')
         return attrs
