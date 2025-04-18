@@ -9,8 +9,8 @@ from apps.base.models import (
     Tag,
 )
 
-
 EMPTY_MSG = '-пусто-'
+
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
