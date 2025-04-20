@@ -1,11 +1,8 @@
-import uuid
-
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
-from core.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
+from foodgram.settings import MAX_LENGTH_SLUG, MAX_LENTHG_NAME, MIN_AMOUNT
 
 User = get_user_model()
 
@@ -107,10 +104,6 @@ class Recipe(TimeStampModel):
         verbose_name='Время приготовления',
         validators=[MinValueValidator(1)]
     )
-    short_link = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-    )
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -131,12 +124,16 @@ class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        verbose_name='Ингредиент'
+        verbose_name='Ингредиент',
+        blank=False,
+        null=False,
     )
     amount = models.PositiveIntegerField(
         verbose_name='Количество/объем',
         default=MIN_AMOUNT,
-        validators=[MinValueValidator(MIN_AMOUNT)]
+        validators=[MinValueValidator(MIN_AMOUNT)],
+        blank=False,
+        null=False,
     )
 
     class Meta:
@@ -151,38 +148,8 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.amount} {self.measurement} {self.ingredient.name}'
-
-
-class Subscription(TimeStampModel):
-    """Модель подписок."""
-    subscriber = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscriptions',
-        verbose_name='Подписчик'
-    )
-    target = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscribers',
-        verbose_name='Автор',
-    )
-
-    class Meta:
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['subscriber', 'target'],
-                name='unique_subscription')]
-
-    def __str__(self):
-        return f'{self.subscriber.username} подписан на {self.target.username}'
-
-    def clean(self):
-        if self.subscriber == self.target:
-            raise ValidationError('Нельзя подписаться на самого себя')
+        return f'{self.amount} {self.ingredient.measurement_unit} ' \
+            f'{self.ingredient.name}'
 
 
 class Favorite(TimeStampModel):

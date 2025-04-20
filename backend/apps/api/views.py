@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, get_user_model
 from django.db.models import Sum
 from django.core.exceptions import ObjectDoesNotExist
@@ -20,8 +21,9 @@ from .serializers import (
     TagSerializer, ChangePasswordSerializer, CreateUserSerializer,
     CustomUserSerializer, FollowSerializer, GetFollowSerializer,
     UserAvatarSerializer)
-from apps.base.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                              ShoppingCart, Tag, Subscription)
+from apps.recipe.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                                ShoppingCart, Tag)
+from apps.accounts.models import Subscription
 from .pagination import Pagination
 from .permissions import IsOwnerOrReadOnly
 
@@ -76,13 +78,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return CreateRecipeSerializer
         return super().get_serializer_class()
 
-    @action(detail=True, methods=['GET'], url_path='get-link')
-    def generate_short_link(self, request, pk=None):
-        """Создание линка на рецепт."""
-        short_link_recipe = get_object_or_404(Recipe, id=pk).short_link
-        short_link = f'{settings.SITE_DOMAIN}/s/{short_link_recipe}'
-        return Response({'short-link': short_link})
-
     def handle_post_delete(self, request, model, serializer_class, pk):
         recipe = get_object_or_404(Recipe, id=pk)
         user = request.user
@@ -133,13 +128,21 @@ class RecipesViewSet(viewsets.ModelViewSet):
         )
         return HttpResponse(output, content_type='text/plain')
 
+    @action(detail=True, methods=['GET'], url_path='get-link')
+    def generate_short_link(self, request, pk=None):
+        """Создание линка на рецепт."""
+        short_link_id = get_object_or_404(Recipe, id=pk).id
+        short_link = f'{settings.SITE_DOMAIN}/s/{short_link_id}'
+        return Response({'short-link': short_link})
+
 
 @api_view(['GET'])
 @permission_classes((AllowAny, ))
-def redirect_to_recipe(request, short_link):
+def redirect_to_recipe(request, recipe_id):
     """Редирект по короткой ссылке на детальный URL рецепта."""
-    recipe = get_object_or_404(Recipe, short_link=short_link)
-    return redirect(f'{settings.SITE_DOMAIN}/api/recipes/{recipe.id}/')
+    if not Recipe.objects.filter(id=recipe_id).exists():
+        raise ValidationError(f"Рецепт с id={recipe_id} не существует")
+    return redirect(f'/recipes/{recipe_id}/')
 
 
 class CustomTokenCreateView(TokenCreateView):

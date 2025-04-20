@@ -1,8 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-from core.settings import MAX_LENTGHT_EMAIL, MAX_LENTHG_NAME
+from foodgram.settings import MAX_LENTGHT_EMAIL, MAX_LENTHG_NAME
 
 
 class User(AbstractUser):
@@ -43,3 +44,34 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Subscription(models.Model):
+    """Модель подписок."""
+    subscriber = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+        verbose_name='Подписчик'
+    )
+    target = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscribers',
+        verbose_name='Автор',
+    )
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subscriber', 'target'],
+                name='unique_subscription')]
+
+    def __str__(self):
+        return f'{self.subscriber.username} подписан на {self.target.username}'
+
+    def clean(self):
+        if self.subscriber == self.target:
+            raise ValidationError('Нельзя подписаться на самого себя')

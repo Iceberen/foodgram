@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django_filters',
     'apps.accounts.apps.AccountsConfig',
     'apps.api.apps.ApiConfig',
-    'apps.base.apps.BaseConfig',
+    'apps.recipe.apps.RecipeConfig',
 ]
 
 MIDDLEWARE = [
@@ -44,7 +44,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = 'foodgram.urls'
 
 TEMPLATES = [
     {
@@ -62,7 +62,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {

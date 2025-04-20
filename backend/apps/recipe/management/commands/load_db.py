@@ -1,9 +1,9 @@
 import csv
 
-from apps.base.models import Ingredient
+from apps.recipe.models import Ingredient
 from django.core.management.base import BaseCommand
 
-from core.settings import BASE_DIR
+from foodgram.settings import BASE_DIR
 
 
 class Command(BaseCommand):

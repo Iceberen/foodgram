@@ -1,7 +1,7 @@
-from django_filters import rest_framework as filters
-from django_filters.rest_framework import CharFilter, FilterSet
+from django_filters.rest_framework import (
+    CharFilter, FilterSet, ModelMultipleChoiceFilter, NumberFilter)
 
-from apps.base.models import Ingredient, Recipe, Tag
+from apps.recipe.models import Ingredient, Recipe, Tag
 
 
 class IngredientFilter(FilterSet):
@@ -17,15 +17,12 @@ class IngredientFilter(FilterSet):
 class RecipeFilter(FilterSet):
     """Фильтр рецептов."""
 
-    author = filters.CharFilter(field_name='author__id',
-                                lookup_expr='startswith')
-    tags = filters.ModelMultipleChoiceFilter(field_name='tags__slug',
-                                             queryset=Tag.objects.all(),
-                                             to_field_name='slug',)
-    is_favorited = filters.NumberFilter(method='filter_is_favorited')
-    is_in_shopping_cart = filters.NumberFilter(
-        method='filter_is_in_shopping_cart',
-        field_name='is_in_shopping_cart')
+    tags = ModelMultipleChoiceFilter(field_name='tags__slug',
+                                     queryset=Tag.objects.all(),
+                                     to_field_name='slug',)
+    is_favorited = NumberFilter(method='filter_is_favorited')
+    is_in_shopping_cart = NumberFilter(method='filter_is_in_shopping_cart',
+                                       field_name='is_in_shopping_cart')
 
     class Meta:
         model = Recipe

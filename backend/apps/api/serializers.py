@@ -1,4 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -6,11 +7,9 @@ from django.core.validators import RegexValidator
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 
-from apps.base.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                              ShoppingCart, Tag, Subscription)
-from core.settings import (MAX_LENTHG_RECIPE, MIN_AMOUNT, MIN_TIME,
-                           MAX_LENTGHT_EMAIL, MAX_LENTHG_NAME,
-                           MIN_PASSWORD_LENGTH)
+from apps.recipe.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                                ShoppingCart, Tag)
+from apps.accounts.models import Subscription
 
 User = get_user_model()
 
@@ -26,18 +25,19 @@ class TokenCreateSerializer(serializers.Serializer):
 class CreateUserSerializer(serializers.ModelSerializer):
     """Сериализатор создания пользователя."""
 
-    password = serializers.CharField(min_length=MIN_PASSWORD_LENGTH,
+    password = serializers.CharField(min_length=settings.MIN_PASSWORD_LENGTH,
                                      write_only=True, required=True)
     first_name = serializers.CharField(required=True,
-                                       max_length=MAX_LENTHG_NAME)
+                                       max_length=settings.MAX_LENTHG_NAME)
     last_name = serializers.CharField(required=True,
-                                      max_length=MAX_LENTHG_NAME)
-    email = serializers.EmailField(max_length=MAX_LENTGHT_EMAIL, required=True,
+                                      max_length=settings.MAX_LENTHG_NAME)
+    email = serializers.EmailField(max_length=settings.MAX_LENTGHT_EMAIL,
+                                   required=True,
                                    validators=[UniqueValidator(
                                        queryset=User.objects.all(),
                                        message='Почта уже занята')])
     username = serializers.CharField(
-        max_length=MAX_LENTHG_NAME,
+        max_length=settings.MAX_LENTHG_NAME,
         required=True,
         validators=[
             RegexValidator(regex=r'^[\w.@+-]+$',
@@ -96,8 +96,9 @@ class UserAvatarSerializer(serializers.ModelSerializer):
 class ChangePasswordSerializer(serializers.Serializer):
     """Сериализатор изменения пароля."""
 
-    new_password = serializers.CharField(min_length=MIN_PASSWORD_LENGTH,
-                                         style={'input_type': 'password'})
+    new_password = serializers.CharField(
+        min_length=settings.MIN_PASSWORD_LENGTH,
+        style={'input_type': 'password'})
     current_password = serializers.CharField(style={'input_type': 'password'})
 
     def validate_new_password(self, value):
@@ -204,7 +205,8 @@ class CreateRecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all(),
                                             source='ingredient',
                                             required=True)
-    amount = serializers.IntegerField(required=True, min_value=MIN_AMOUNT)
+    amount = serializers.IntegerField(required=True,
+                                      min_value=settings.MIN_AMOUNT)
 
     class Meta:
         model = RecipeIngredient
@@ -218,8 +220,10 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True, write_only=True, required=True)
-    name = serializers.CharField(required=True, max_length=MAX_LENTHG_RECIPE)
-    cooking_time = serializers.IntegerField(min_value=MIN_TIME, required=True)
+    name = serializers.CharField(required=True,
+                                 max_length=settings.MAX_LENTHG_RECIPE)
+    cooking_time = serializers.IntegerField(min_value=settings.MIN_TIME,
+                                            required=True)
     image = Base64ImageField()
 
     class Meta:
